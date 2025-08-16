@@ -1,45 +1,75 @@
 openapi: 3.0.1
 info:
-  title: Market Adapter
-  description: Analyze market trends using fractal AI logic
+  title: Fractal Market Analyzer
+  description: API for analyzing market data using recursive fractal methods.
   version: "1.0.0"
+
 servers:
-  - url: https://your-domain.com
+  - url: https://market-analyzer-vgqs.onrender.com
+
 paths:
-  /analyze:
-    post:
-      operationId: analyzeMarket
-      summary: Analyze market for given ticker and date
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MarketAnalysisRequest"
+  /:
+    get:
+      summary: Root check
+      operationId: rootCheck
       responses:
         "200":
-          description: Market analysis result
+          description: Health check
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  ticker:
-                    type: string
-                  date:
-                    type: string
                   message:
                     type: string
-components:
-  schemas:
-    MarketAnalysisRequest:
-      type: object
-      properties:
-        ticker:
-          type: string
-        date:
-          type: string
-      required:
-        - ticker
-        - date
+                    example: Hello from Fractal Market Analyzer (Flask)!
+
+  /analyze:
+    post:
+      summary: Run market analysis
+      operationId: runAnalysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticker:
+                  type: string
+                  example: AAPL
+                start_date:
+                  type: string
+                  format: date
+                  example: "2024-01-01"
+                end_date:
+                  type: string
+                  format: date
+                  example: "2024-01-31"
+      responses:
+        "200":
+          description: Analysis result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  result:
+                    type: object
+                    description: The computed market analysis
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
 
