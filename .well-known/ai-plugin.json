@@ -1,18 +1,18 @@
 {
-  "schema_version": "1",
-  "name_for_human": "Market Analyzer",
-  "name_for_model": "marketAnalyzer",
-  "description_for_human": "Analyze stock and sector behavior using fractal methods.",
-  "description_for_model": "Plugin for querying and interpreting stock data using recursive and fractal analysis logic.",
+  "schema_version": "v1",
+  "name_for_human": "Market Adapter",
+  "name_for_model": "market_adapter",
+  "description_for_human": "Adapter service for FAA MVP",
+  "description_for_model": "Provides FAA data parsing and adapter endpoints.",
   "auth": {
     "type": "none"
   },
   "api": {
     "type": "openapi",
-    "url": "https://your-domain.com/.well-known/openapi.yaml"
+    "url": "https://yourdomain.com/.well-known/openapi.yaml"
   },
-  "logo_url": "https://your-domain.com/logo.png",
+  "logo_url": "https://yourdomain.com/logo.png",
   "contact_email": "support@yourdomain.com",
-  "legal_info_url": "https://your-domain.com/legal"
+  "legal_info_url": "https://yourdomain.com/legal"
 }
 
