@@ -1,0 +1,45 @@
+openapi: 3.0.1
+info:
+  title: Market Adapter
+  description: Analyze market trends using fractal AI logic
+  version: "1.0.0"
+servers:
+  - url: https://your-domain.com
+paths:
+  /analyze:
+    post:
+      operationId: analyzeMarket
+      summary: Analyze market for given ticker and date
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarketAnalysisRequest"
+      responses:
+        "200":
+          description: Market analysis result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticker:
+                    type: string
+                  date:
+                    type: string
+                  message:
+                    type: string
+components:
+  schemas:
+    MarketAnalysisRequest:
+      type: object
+      properties:
+        ticker:
+          type: string
+        date:
+          type: string
+      required:
+        - ticker
+        - date
+
