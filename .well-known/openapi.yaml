@@ -1,20 +1,18 @@
 openapi: 3.0.1
 info:
-  title: Fractal Market Analyzer
-  description: API for analyzing market data using recursive fractal methods.
+  title: Fractal Market Analyzer API
   version: "1.0.0"
-
+  description: API for analyzing financial markets using FAA (Fractal/Field-Aware Analytics).
 servers:
   - url: https://market-analyzer-vgqs.onrender.com
-
 paths:
   /:
     get:
-      summary: Root check
       operationId: rootCheck
+      summary: Health check
       responses:
         "200":
-          description: Health check
+          description: OK
           content:
             application/json:
               schema:
@@ -23,32 +21,29 @@ paths:
                   message:
                     type: string
                     example: Hello from Fractal Market Analyzer (Flask)!
-
   /analyze:
     post:
-      summary: Run market analysis
       operationId: runAnalysis
+      summary: Run FAA analysis over a tabular payload
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [table]
               properties:
-                ticker:
-                  type: string
-                  example: AAPL
-                start_date:
-                  type: string
-                  format: date
-                  example: "2024-01-01"
-                end_date:
-                  type: string
-                  format: date
-                  example: "2024-01-31"
+                table:
+                  type: array
+                  description: List of rows with at least {date, firm, sector, numeric features}
+                  items:
+                    type: object
+                feature_cols:
+                  type: array
+                  items: { type: string }
       responses:
         "200":
-          description: Analysis result
+          description: FAA results
           content:
             application/json:
               schema:
@@ -59,17 +54,27 @@ paths:
                     example: success
                   result:
                     type: object
-                    description: The computed market analysis
+                    properties:
+                      last_date: { type: string }
+                      coherence:
+                        type: object
+                        additionalProperties: { type: number }
+                      velocity:
+                        type: object
+                        additionalProperties: { type: number }
+                      oom:
+                        type: object
+                        additionalProperties: { type: number }
+                      composite:
+                        type: object
+                        additionalProperties: { type: number }
         "400":
-          description: Error
+          description: Bad request
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: string
-                    example: error
-                  message:
-                    type: string
+                  status: { type: string, example: error }
+                  message: { type: string }
 
