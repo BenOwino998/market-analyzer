@@ -1,17 +1,18 @@
 from flask import Flask, jsonify, request, send_from_directory
-from FAA_MVP import run_analysis  # entry point from your FAA module
+from FAA_MVP import run_analysis as run_equity_analysis
+from FAA_MVP_Crypto import run_analysis_crypto as run_crypto_analysis
 
 app = Flask(__name__)
 
-# Serve plugin files
+# --- Serve plugin files ---
 @app.route("/.well-known/<path:filename>", methods=["GET"])
 def well_known(filename):
     return send_from_directory(".well-known", filename)
 
-# Health check
+# --- Health check ---
 @app.route("/", methods=["GET"])
 def root():
-    return jsonify({"message": "Hello from Fractal Market Analyzer (Flask)!"})
+    return jsonify({"message": "Hello from Fractal Market Analyzer (Equity + Crypto)!"})
 
 # --- Legal pages ---
 @app.route("/privacy", methods=["GET"])
@@ -46,17 +47,35 @@ def terms():
     </html>
     """, 200, {"Content-Type": "text/html; charset=utf-8"}
 
-# Main analysis endpoint
+# --- Main Analysis Dispatcher ---
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
         data = request.get_json(force=True, silent=False)
-        result = run_analysis(data)  # call FAA
-        return jsonify({"status": "success", "result": result})
+        table = data.get("table", [])
+
+        if not table:
+            raise ValueError("Missing 'table' in request.")
+
+        # --- Detect universe ---
+        first_row = table[0]
+        if "firm" in first_row and "sector" in first_row:
+            result = run_equity_analysis(data)
+            universe = "equity"
+        elif "asset" in first_row and "category" in first_row:
+            result = run_crypto_analysis(data)
+            universe = "crypto"
+        else:
+            raise ValueError(
+                "Unknown schema: cannot detect universe "
+                "(expected firm/sector for equity or asset/category for crypto)."
+            )
+
+        return jsonify({"status": "success", "universe": universe, "result": result})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
 
+# --- Run app ---
 if __name__ == "__main__":
-    # Render runs `python main.py`; bind to 0.0.0.0 for external access
     app.run(host="0.0.0.0", port=5000)
 
